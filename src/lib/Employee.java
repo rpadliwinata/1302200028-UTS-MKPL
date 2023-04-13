@@ -17,19 +17,33 @@ public class Employee {
 	private int monthJoined;
 	private int dayJoined;
 	private int monthWorkingInYear;
+
+	private Salary salary;
 	
 	private boolean isForeigner;
 	private boolean gender; //true = Laki-laki, false = Perempuan
-	
-	private int monthlySalary;
-	private int otherMonthlyIncome;
-	private int annualDeductible;
 	
 	private String spouseName;
 	private String spouseIdNumber;
 
 	private List<String> childNames;
 	private List<String> childIdNumbers;
+
+	private class Salary {
+		int monthlySalary;
+		int otherMonthlyIncome;
+		int annualDeductible;
+
+		Salary(int monthlySalary, int otherMonthlyIncome, int annualDeductible) {
+			this.monthlySalary = monthlySalary
+			this.otherMonthlyIncome = otherMonthlyIncome
+			this.annualDeductible = annualDeductible
+		}
+
+		int getMonthlyIncome() {
+			return this.monthlySalary + this.otherMonthlyIncome;
+		}
+	}
 	
 	public Employee(String employeeId, String firstName, String lastName, String idNumber, String address, int yearJoined, int monthJoined, int dayJoined, boolean isForeigner, boolean gender) {
 		this.employeeId = employeeId;
@@ -51,7 +65,7 @@ public class Employee {
 	 * Fungsi untuk menentukan gaji bulanan pegawai berdasarkan grade kepegawaiannya (grade 1: 3.000.000 per bulan, grade 2: 5.000.000 per bulan, grade 3: 7.000.000 per bulan)
 	 * Jika pegawai adalah warga negara asing gaji bulanan diperbesar sebanyak 50%
 	 */
-	public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
+	public static int calculateTax(int numberOfMonthWorking, boolean isMarried, int numberOfChildren) {
 		
 		int tax = 0;
 		
@@ -64,9 +78,9 @@ public class Employee {
 		}
 		
 		if (isMarried) {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - (54000000 + 4500000 + (numberOfChildren * 1500000))));
+			tax = (int) Math.round(0.05 * ((this.salary.getMonthlyIncome() * numberOfMonthWorking) - this.salary.annualDeductible - (54000000 + 4500000 + (numberOfChildren * 1500000))));
 		}else {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - 54000000));
+			tax = (int) Math.round(0.05 * ((this.salary.getMonthlyIncome() * numberOfMonthWorking) - this.salary.annualDeductible - 54000000));
 		}
 		
 		if (tax < 0) {
